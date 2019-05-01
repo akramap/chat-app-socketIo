@@ -1,10 +1,10 @@
-// import is a ES6 feature not suppoeted by nodejs by default and it can  supported by babel right now 
+// import is a ES6 feature not supported by nodejs by default and it can  supported by babel right now 
 import path from "path";
 // express internally uses inbuilt module called http to create server so import. 
 import http from "http";
 
 import express from "express";
-// socketIo
+// socketIo is a library for abstracting websocket connections.
 import socketIo from "socket.io";
 
 
@@ -29,11 +29,29 @@ app.use(express.static(publicPath));
 // to establish socket connection
 io.on('connection', (socket) => {
     console.log('New user connected');
-  // to disconnect socket
+  
+  
+  //  // sending/broadcasting messages(from here i.e server) to client ---1.
+  //  socket.emit('newMessage',{    
+  //    from: 'akram@cm.com',
+  //    text:'server to client'
+  //  });
+  
+   // listening messages from client ---2.
+   socket.on('createMessage',(message)=>{
+    console.log('createMessage',message);  
+    io.emit('newMessage',{
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });  
+   });
+
+    // to disconnect socket
     socket.on('disconnect', () => {
       console.log('User was disconnected');
     });
-  });
+    });
 
 server.listen(port,()=>{
     console.log(`Server is up on ${port}`);
