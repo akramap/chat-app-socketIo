@@ -30,16 +30,24 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');
   
+     // send message to indivitual user.
+     socket.emit('newMessage',{
+      from:'Admin',
+      text:'Welcome To The Chat App',
+      createdAt:new Date().getTime()
+    });
+
+   // broadcast messages to indivitual user.
+   socket.broadcast.emit('newMessage',{
+     from:'Admin',
+     text:'New User Joined',
+     createdAt:new Date().getTime()
+    });
   
-  //  // sending/broadcasting messages(from here i.e server) to client ---1.
-  //  socket.emit('newMessage',{    
-  //    from: 'akram@cm.com',
-  //    text:'server to client'
-  //  });
-  
-   // listening messages from client ---2.
+   // listening messages from client.
    socket.on('createMessage',(message)=>{
     console.log('createMessage',message);  
+
     io.emit('newMessage',{
       from: message.from,
       text: message.text,
