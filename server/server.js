@@ -6,6 +6,7 @@ import http from "http";
 import express from "express";
 // socketIo is a library for abstracting websocket connections.
 import socketIo from "socket.io";
+import {generateMessage} from "./utils/message";
 
 
 // this connects server to the client,setting up the path i.e currentdir/public.
@@ -31,28 +32,17 @@ io.on('connection', (socket) => {
     console.log('New user connected');
   
      // send(greet) message to indivitual user.
-     socket.emit('newMessage',{
-      from:'Admin',
-      text:'Welcome To The Chat App',
-      createdAt:new Date().getTime()
-    });
+     socket.emit('newMessage',
+     generateMessage('Admin','Welcome To The Chat App'));
 
    // broadcast(alert) messages to all user.
-   socket.broadcast.emit('newMessage',{
-     from:'Admin',
-     text:'New User Joined',
-     createdAt:new Date().getTime()
-    });
+   socket.broadcast.emit('newMessage',generateMessage('Admin','New User Joined'));
   
    // listening messages from client.
    socket.on('createMessage',(message)=>{
     console.log('createMessage',message);  
 
-    io.emit('newMessage',{
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    });  
+    io.emit('newMessage',generateMessage(message.from,message.text));  
    });
 
     // to disconnect socket
