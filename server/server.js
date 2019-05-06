@@ -23,7 +23,6 @@ const server = http.createServer(app);
 
 const io=socketIo(server);
 
-
 // using the express middleware
 app.use(express.static(publicPath));
 
@@ -39,17 +38,18 @@ io.on('connection', (socket) => {
    socket.broadcast.emit('newMessage',generateMessage('Admin','New User Joined'));
   
    // listening messages from client.
-   socket.on('createMessage',(message)=>{
+   socket.on('createMessage', (message, callback)=>{
     console.log('createMessage',message);  
 
-    io.emit('newMessage',generateMessage(message.from,message.text));  
+    io.emit('newMessage',generateMessage(message.from, message.text)); 
+    callback('This is from server.'); 
    });
 
     // to disconnect socket
     socket.on('disconnect', () => {
       console.log('User was disconnected');
     });
-    });
+  });
 
 server.listen(port,()=>{
     console.log(`Server is up on ${port}`);
